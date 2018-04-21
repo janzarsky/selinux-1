@@ -67,6 +67,7 @@ xperms_invalid = """type=AVC msg=audit(1516626657.910:4461): avc:  denied  { ioc
 """
 xperms_without = """type=AVC msg=audit(1516626657.910:4461): avc:  denied  { ioctl } for  pid=4310 comm="test" path="/root/test" ino=8619937 scontext=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 tcontext=unconfined_u:object_r:test_file_t:s0 tclass=file permissive=0
 """
+path2 = """type=AVC msg=audit(1162852201.019:1225): avc:  denied  { getattr } for  pid=6974 comm="sh" path="/etc/testfile" dev=dm-0 ino=13061698 scontext=system_u:system_r:crond_t:s0-s0:c0.c1023 tcontext=system_u:object_r:admin_home_t:s0 tclass=file"""
 
 class TestAVCMessage(unittest.TestCase):
     def test_defs(self):
@@ -168,6 +169,14 @@ class TestAVCMessage(unittest.TestCase):
         self.assertEqual(avc.comm, "sh")
 
         self.assertEqual(avc.denial, True)
+
+    def test_path(self):
+        """Test that the path field is parsed"""
+        avc = sepolgen.audit.AVCMessage(path2)
+        recs = path2.split()
+        avc.from_split_string(recs)
+
+        self.assertEqual(avc.path, "/etc/testfile")
 
 class TestPathMessage(unittest.TestCase):
     def test_from_split_string(self):

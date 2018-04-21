@@ -244,6 +244,8 @@ class AVCMessage(AuditMessage):
                     self.ioctlcmd = int(fields[1], 16)
                 except:
                     pass
+            elif fields[0] == "path":
+                self.path = fields[1][1:-1]
 
         if not found_src or not found_tgt or not found_class or not found_access:
             raise ValueError("AVC message in invalid format [%s]\n" % self.message)
